@@ -3,16 +3,21 @@ package com.tonicartos.superslimexample;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.tonicartos.superslim.GridSLM;
 import com.tonicartos.superslim.LayoutManager;
-import com.tonicartos.superslim.LinearSLM;
-import com.tonicartos.superslim.SectionLayoutManager;
+import com.tonicartos.superslimexample.recycler.LoadMoreAdapter;
+import com.tonicartos.superslimexample.recycler.StickyItemImpl;
+import com.tonicartos.superslimexample.recycler.StickyAdapter;
+import com.tonicartos.superslimexample.recycler.StickyItemsWrapper;
+import com.tonicartos.superslimexample.recycler.ViewType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -26,7 +31,7 @@ public class CountriesFragment extends Fragment {
 
     private ViewHolder mViews;
 
-    private CountryNamesAdapter mAdapter;
+    private LoadMoreAdapter mAdapter;
 
     private int mHeaderDisplay;
 
@@ -35,10 +40,6 @@ public class CountriesFragment extends Fragment {
     private Random mRng = new Random();
 
     private Toast mToast = null;
-
-    private GridSLM mGridSLM;
-
-    private SectionLayoutManager mLinearSectionLayoutManager;
 
     public boolean areHeadersOverlaid() {
         return (mHeaderDisplay & LayoutManager.LayoutParams.HEADER_OVERLAY) != 0;
@@ -64,7 +65,7 @@ public class CountriesFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
@@ -80,13 +81,13 @@ public class CountriesFragment extends Fragment {
                     .getBoolean(KEY_MARGINS_FIXED,
                             getResources().getBoolean(R.bool.default_margins_fixed));
         } else {
-            mHeaderDisplay = getResources().getInteger(R.integer.default_header_display);
+            mHeaderDisplay = LayoutManager.LayoutParams.HEADER_INLINE
+                    | LayoutManager.LayoutParams.HEADER_STICKY;
             mAreMarginsFixed = getResources().getBoolean(R.bool.default_margins_fixed);
         }
-
         mViews = new ViewHolder(view);
         mViews.initViews(new LayoutManager(getActivity()));
-        mAdapter = new CountryNamesAdapter(getActivity(), mHeaderDisplay);
+        mAdapter = new LoadMoreAdapter(mViews.mRecyclerView, getActivity(), mHeaderDisplay, mViews.initItemList());
         mAdapter.setMarginsFixed(mAreMarginsFixed);
         mAdapter.setHeaderDisplay(mHeaderDisplay);
         mViews.setAdapter(mAdapter);
@@ -95,7 +96,6 @@ public class CountriesFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
         outState.putInt(KEY_HEADER_POSITIONING, mHeaderDisplay);
         outState.putBoolean(KEY_MARGINS_FIXED, mAreMarginsFixed);
     }
@@ -147,13 +147,17 @@ public class CountriesFragment extends Fragment {
         mViews.smoothScrollToPosition(position);
     }
 
-    private static class ViewHolder {
+    private static class ViewHolder implements LoadMoreAdapter.OnLoadMoreListener {
 
         private final RecyclerView mRecyclerView;
+        private int loadMore = 0;
+        private LoadMoreAdapter adapter;
 
+        public StickyItemsWrapper stickyItemWrapper;
 
         public ViewHolder(View view) {
             mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+            stickyItemWrapper = new StickyItemsWrapper();
         }
 
         public void initViews(LayoutManager lm) {
@@ -164,12 +168,74 @@ public class CountriesFragment extends Fragment {
             mRecyclerView.scrollToPosition(position);
         }
 
-        public void setAdapter(RecyclerView.Adapter<?> adapter) {
+        public void setAdapter(LoadMoreAdapter adapter) {
+            this.adapter = adapter;
             mRecyclerView.setAdapter(adapter);
+            adapter.setOnLoadMoreListener(this);
         }
 
         public void smoothScrollToPosition(int position) {
             mRecyclerView.smoothScrollToPosition(position);
+        }
+
+        @Override
+        public void onLoadMore() {
+            mRecyclerView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    adapter.setLoaded();
+                    if (loadMore == 1) {
+                        stickyItemWrapper.addToListData(getInitItemList(stickyItemWrapper.getLastItem(), R.array.country_names_2, stickyItemWrapper.getHeaderCount()));
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            }, 4000);
+        }
+
+        @Override
+        public boolean canLoadMore() {
+            if (loadMore < 10) {
+                loadMore++;
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        public List<StickyItemImpl> initItemList() {
+            stickyItemWrapper.addToListData(getInitItemList(null, R.array.country_names, stickyItemWrapper.getHeaderCount()));
+            return stickyItemWrapper.getList();
+        }
+
+        private List<StickyItemImpl> getInitItemList(StickyItemImpl lastItem, int arrayResStr, int size) {
+            final String[] countryNames = mRecyclerView.getResources().getStringArray(arrayResStr);
+            ArrayList<StickyItemImpl> mItems = new ArrayList<>();
+            // Insert headers into list of items.
+            String lastHeader = lastItem != null ? lastItem.text.substring(0, 1) : "";
+            int sectionManagerType = StickyAdapter.LINEAR;
+            int headerCount = 0;
+            int lastItemPosition = lastItem != null ? lastItem.sectionFirstPosition() : 0;
+            int sectionFirstPosition = lastItemPosition;
+            for (int i = 0; i < countryNames.length; i++) {
+                String header = countryNames[i].substring(0, 1);
+                if (!TextUtils.equals(lastHeader, header)) { // is need to create new group
+                    // Insert new header view and update section data.
+//                sectionManager = (sectionManager + 1) % 2;
+                    sectionFirstPosition = lastItemPosition + i + headerCount;
+                    lastHeader = header;
+                    headerCount += 1;
+                    mItems.add(getItem(ViewType.TYPE_HEADER, countryNames[i], sectionManagerType, sectionFirstPosition));
+                }
+                mItems.add(getItem(ViewType.TYPE_CONTENT, countryNames[i], sectionManagerType, sectionFirstPosition));
+            }
+            stickyItemWrapper.setHeaderCount(headerCount);
+            return mItems;
+        }
+
+        private StickyItemImpl getItem(int viewType, String text, int sectionManager, int sectionFirstPosition) {
+            StickyItemImpl item = new StickyItemImpl(viewType, sectionManager, sectionFirstPosition);
+            item.text = text;
+            return item;
         }
     }
 }

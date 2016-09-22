@@ -138,6 +138,9 @@
         <item>Norway</item>
         <item>Oman</item>
         <item>Pakistan</item>
+
+    </string-array>
+    <string-array name="country_names_2">
         <item>Palau</item>
         <item>Palestinian Territories</item>
         <item>Panama</item>
@@ -202,7 +205,6 @@
         <item>Yemen</item>
         <item>Zambia</item>
         <item>Zimbabwe</item>
-
     </string-array>
 
 </resources>
