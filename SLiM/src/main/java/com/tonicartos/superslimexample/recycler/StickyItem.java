@@ -4,7 +4,7 @@ public interface StickyItem {
     /**
      * @return is header item or not
      */
-    boolean isHeader();
+    boolean isStickyHeader();
 
     /**
      * @return Must be one of LinearSLM.ID or GridSLM.ID
@@ -15,4 +15,9 @@ public interface StickyItem {
      * @return first index of position group
      */
     int sectionFirstPosition();
+
+    /**
+     * @return View type of item
+     */
+    int getType();
 }

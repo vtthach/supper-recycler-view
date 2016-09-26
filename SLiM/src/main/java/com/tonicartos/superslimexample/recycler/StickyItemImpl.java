@@ -1,16 +1,9 @@
 package com.tonicartos.superslimexample.recycler;
 
-public class StickyItemImpl implements StickyItem {
-
-    private final int type;
-    private final int sectionManagerType;
-    private final int sectionFirstPosition;
-
-    public String text;
-
-    public int getType() {
-        return type;
-    }
+public abstract class StickyItemImpl implements StickyItem {
+    private int sectionManagerType;
+    private int sectionFirstPosition;
+    private int type;
 
     public StickyItemImpl(int type, int sectionManagerType, int sectionFirstPosition) {
         this.type = type;
@@ -19,8 +12,13 @@ public class StickyItemImpl implements StickyItem {
     }
 
     @Override
-    public boolean isHeader() {
-        return type == ViewType.TYPE_HEADER;
+    public int getType() {
+        return type;
+    }
+
+    @Override
+    public boolean isStickyHeader() {
+        return type == ViewType.TYPE_STICKY_HEADER;
     }
 
     @Override
@@ -31,5 +29,13 @@ public class StickyItemImpl implements StickyItem {
     @Override
     public int sectionFirstPosition() {
         return sectionFirstPosition;
+    }
+
+    public abstract long getGroupId();
+
+    public void updateGroupInfo(int viewType, int sectionManagerType, int sectionFirstPosition){
+        this.type = viewType;
+        this.sectionManagerType = sectionManagerType;
+        this.sectionFirstPosition = sectionFirstPosition;
     }
 }

@@ -10,30 +10,25 @@ import android.widget.TextView;
 
 import com.tonicartos.superslim.LayoutManager;
 import com.tonicartos.superslimexample.R;
+import com.tonicartos.superslimexample.transaction.AccMgtTransactionHistoryInfo;
 
 import java.util.List;
 
-public class LoadMoreAdapter extends StickyAdapter<StickyItemImpl> {
+public class TransactionHistoryAdapter extends StickyHeaderAdapter<AccMgtTransactionHistoryInfo> {
 
     private int totalItemCount;
     private int lastVisibleItem;
     private boolean isLoading;
-    private int visibleThreshold = 5;
     private OnLoadMoreListener onLoadMoreListener;
+    private static final int VISIBLE_ITEM_THRESHOLD = 5;
 
-    public LoadMoreAdapter(RecyclerView recyclerView, Context context, int headerMode, List<StickyItemImpl> itemList) {
+    public TransactionHistoryAdapter(RecyclerView recyclerView, Context context, int headerMode, List<AccMgtTransactionHistoryInfo> itemList) {
         super(context, headerMode, itemList);
         initLoadMoreListener(recyclerView);
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        return mItems.get(position).getType();
-    }
-
     public void setLoaded() {
-        mItems.remove(mItems.size() - 1);
-        notifyItemRemoved(mItems.size());
+        setShowFooter(false);
         isLoading = false;
     }
 
@@ -47,9 +42,7 @@ public class LoadMoreAdapter extends StickyAdapter<StickyItemImpl> {
                 lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
                 if (preConditionToLoadMore() && isListenerAccept()) {
                     isLoading = true;
-                    StickyItemImpl lastItem = mItems.get(mItems.size() - 1);
-                    mItems.add(new StickyItemImpl(ViewType.TYPE_LOADMORE, LINEAR, lastItem.sectionFirstPosition()));
-                    notifyItemInserted(mItems.size() - 1);
+                    setShowFooter(true);
                     onLoadMoreListener.onLoadMore();
                 }
             }
@@ -61,7 +54,7 @@ public class LoadMoreAdapter extends StickyAdapter<StickyItemImpl> {
     }
 
     private boolean preConditionToLoadMore() {
-        return !isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold);
+        return !isLoading && totalItemCount <= (lastVisibleItem + VISIBLE_ITEM_THRESHOLD);
     }
 
     public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
@@ -75,49 +68,44 @@ public class LoadMoreAdapter extends StickyAdapter<StickyItemImpl> {
     }
 
     public String itemToString(int position) {
-        return mItems.get(position).text;
-    }
-
-
-    @Override
-    public GenericViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == ViewType.TYPE_LOADMORE) {
-            return onCreateLoadingViewHolder(parent);
-        }
-        return super.onCreateViewHolder(parent, viewType);
-    }
-
-    protected GenericViewHolder onCreateLoadingViewHolder(ViewGroup parent) {
-        return new LoadingViewHolder(LayoutInflater.from(mContext).inflate(R.layout.loading_view, parent, false));
+        return itemList.get(position).transactionDescriptionOne;
     }
 
     @Override
-    public GenericViewHolder onCreateItemHolder(ViewGroup parent) {
+    public GenericViewHolder onCreateFooterHolder(ViewGroup parent) {
+        return new LoadingViewHolder(LayoutInflater.from(mContext)
+                .inflate(R.layout.loading_view, parent, false));
+    }
+
+    @Override
+    public GenericViewHolder onCreateContentHolder(ViewGroup parent) {
         return new ItemViewHolder(LayoutInflater.from(mContext)
                 .inflate(R.layout.text_line_item, parent, false));
     }
 
     @Override
-    public GenericViewHolder onCreateHeaderHolder(ViewGroup parent) {
-        return new HeaderViewHolder(LayoutInflater.from(mContext)
+    public GenericViewHolder onCreateStickyHeaderHolder(ViewGroup parent) {
+        return new StickyHeaderViewHolder(LayoutInflater.from(mContext)
                 .inflate(R.layout.header_item, parent, false));
     }
 
-    static class HeaderViewHolder extends GenericViewHolder<StickyItemImpl> {
+    static class StickyHeaderViewHolder extends GenericViewHolder {
+
         TextView textView;
 
-        public HeaderViewHolder(View itemView) {
+        public StickyHeaderViewHolder(View itemView) {
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.text);
         }
 
         @Override
-        public void bindItem(int position, StickyItemImpl item) {
-            textView.setText(item.text);
+        public void bindItem(int position, Object item) {
+            AccMgtTransactionHistoryInfo accMgtTransactionHistoryInfo = (AccMgtTransactionHistoryInfo) item;
+            textView.setText(accMgtTransactionHistoryInfo.getTransactionDateDisplay());
         }
     }
 
-    static class ItemViewHolder extends GenericViewHolder<StickyItemImpl> {
+    static class ItemViewHolder extends GenericViewHolder {
         TextView textView;
 
         public ItemViewHolder(View itemView) {
@@ -126,13 +114,14 @@ public class LoadMoreAdapter extends StickyAdapter<StickyItemImpl> {
         }
 
         @Override
-        public void bindItem(int position, StickyItemImpl item) {
-            textView.setText(item.text);
+        public void bindItem(int position, Object item) {
+            AccMgtTransactionHistoryInfo accMgtTransactionHistoryInfo = (AccMgtTransactionHistoryInfo) item;
+            textView.setText(accMgtTransactionHistoryInfo.transactionDescriptionOne);
         }
     }
 
-    static class LoadingViewHolder extends GenericViewHolder<StickyItem> {
-        public ProgressBar progressBar;
+    static class LoadingViewHolder extends GenericViewHolder {
+        private ProgressBar progressBar;
 
         public LoadingViewHolder(View itemView) {
             super(itemView);
@@ -140,7 +129,7 @@ public class LoadMoreAdapter extends StickyAdapter<StickyItemImpl> {
         }
 
         @Override
-        public void bindItem(int position, StickyItem item) {
+        public void bindItem(int position, Object item) {
             progressBar.setIndeterminate(true);
         }
     }

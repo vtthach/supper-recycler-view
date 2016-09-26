@@ -3,20 +3,19 @@ package com.tonicartos.superslimexample;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.tonicartos.superslim.LayoutManager;
-import com.tonicartos.superslimexample.recycler.LoadMoreAdapter;
-import com.tonicartos.superslimexample.recycler.StickyItemImpl;
-import com.tonicartos.superslimexample.recycler.StickyAdapter;
 import com.tonicartos.superslimexample.recycler.StickyItemsWrapper;
-import com.tonicartos.superslimexample.recycler.ViewType;
+import com.tonicartos.superslimexample.recycler.TransactionHistoryAdapter;
+import com.tonicartos.superslimexample.transaction.AccMgtTransactionHistoryInfo;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
@@ -31,7 +30,7 @@ public class CountriesFragment extends Fragment {
 
     private ViewHolder mViews;
 
-    private LoadMoreAdapter mAdapter;
+    private TransactionHistoryAdapter mAdapter;
 
     private int mHeaderDisplay;
 
@@ -87,7 +86,7 @@ public class CountriesFragment extends Fragment {
         }
         mViews = new ViewHolder(view);
         mViews.initViews(new LayoutManager(getActivity()));
-        mAdapter = new LoadMoreAdapter(mViews.mRecyclerView, getActivity(), mHeaderDisplay, mViews.initItemList());
+        mAdapter = new TransactionHistoryAdapter(mViews.mRecyclerView, getActivity(), mHeaderDisplay, mViews.initItemList());
         mAdapter.setMarginsFixed(mAreMarginsFixed);
         mAdapter.setHeaderDisplay(mHeaderDisplay);
         mViews.setAdapter(mAdapter);
@@ -103,7 +102,7 @@ public class CountriesFragment extends Fragment {
     public void scrollToRandomPosition() {
         int position = mRng.nextInt(mAdapter.getItemCount());
         String s = "Scroll to position " + position
-                + (mAdapter.isItemHeader(position) ? ", header " : ", item ")
+                + (mAdapter.isItemStickyHeader(position) ? ", header " : ", item ")
                 + mAdapter.itemToString(position) + ".";
         if (mToast != null) {
             mToast.setText(s);
@@ -136,7 +135,7 @@ public class CountriesFragment extends Fragment {
     public void smoothScrollToRandomPosition() {
         int position = mRng.nextInt(mAdapter.getItemCount());
         String s = "Smooth scroll to position " + position
-                + (mAdapter.isItemHeader(position) ? ", header " : ", item ")
+                + (mAdapter.isItemStickyHeader(position) ? ", header " : ", item ")
                 + mAdapter.itemToString(position) + ".";
         if (mToast != null) {
             mToast.setText(s);
@@ -147,13 +146,14 @@ public class CountriesFragment extends Fragment {
         mViews.smoothScrollToPosition(position);
     }
 
-    private static class ViewHolder implements LoadMoreAdapter.OnLoadMoreListener {
+    private static class ViewHolder implements TransactionHistoryAdapter.OnLoadMoreListener {
 
         private final RecyclerView mRecyclerView;
         private int loadMore = 0;
-        private LoadMoreAdapter adapter;
+        private TransactionHistoryAdapter adapter;
 
         public StickyItemsWrapper stickyItemWrapper;
+        private int dateTest;
 
         public ViewHolder(View view) {
             mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -168,7 +168,7 @@ public class CountriesFragment extends Fragment {
             mRecyclerView.scrollToPosition(position);
         }
 
-        public void setAdapter(LoadMoreAdapter adapter) {
+        public void setAdapter(TransactionHistoryAdapter adapter) {
             this.adapter = adapter;
             mRecyclerView.setAdapter(adapter);
             adapter.setOnLoadMoreListener(this);
@@ -183,11 +183,10 @@ public class CountriesFragment extends Fragment {
             mRecyclerView.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    Log.i("vtt", "Start get data OnLoadMore:" + loadMore);
                     adapter.setLoaded();
-                    if (loadMore == 1) {
-                        stickyItemWrapper.addToListData(getInitItemList(stickyItemWrapper.getLastItem(), R.array.country_names_2, stickyItemWrapper.getHeaderCount()));
-                        adapter.notifyDataSetChanged();
-                    }
+                    stickyItemWrapper.processAddToListData(getInitItemList(loadMore + "_", R.array.country_names_2));
+                    adapter.notifyDataSetChanged();
                 }
             }, 4000);
         }
@@ -202,40 +201,56 @@ public class CountriesFragment extends Fragment {
             }
         }
 
-        public List<StickyItemImpl> initItemList() {
-            stickyItemWrapper.addToListData(getInitItemList(null, R.array.country_names, stickyItemWrapper.getHeaderCount()));
-            return stickyItemWrapper.getList();
+        public List<AccMgtTransactionHistoryInfo> initItemList() {
+            return stickyItemWrapper.processAddToListData(getInitItemList(0 + "_", R.array.country_names));
         }
 
-        private List<StickyItemImpl> getInitItemList(StickyItemImpl lastItem, int arrayResStr, int size) {
+//        private List<AccMgtTransactionHistoryInfo> getInitItemList(StickyItemImpl lastItem, int arrayResStr, int size) {
+//            final String[] countryNames = mRecyclerView.getResources().getStringArray(arrayResStr);
+//            ArrayList<StickyItemImpl> itemList = new ArrayList<>();
+//            // Insert headers into list of items.
+//            String lastHeader = lastItem != null ? lastItem.text.substring(0, 1) : "";
+//            int sectionManagerType = StickyHeaderAdapter.LINEAR;
+//            int headerCount = 0;
+//            int lastItemPosition = lastItem != null ? lastItem.sectionFirstPosition() : 0;
+//            int sectionFirstPosition = lastItemPosition;
+//            for (int i = 0; i < countryNames.length; i++) {
+//                String header = countryNames[i].substring(0, 1);
+//                if (!TextUtils.equals(lastHeader, header)) { // is need to create new group
+//                    // Insert new header view and update section data.
+////                sectionManager = (sectionManager + 1) % 2;
+//                    sectionFirstPosition = size + itemList.size();
+//                    lastHeader = header;
+//                    itemList.add(getItem(ViewType.TYPE_HEADER, countryNames[i], sectionManagerType, sectionFirstPosition));
+//                }
+//                itemList.add(getItem(ViewType.TYPE_CONTENT, countryNames[i], sectionManagerType, sectionFirstPosition));
+//            }
+//            return itemList;
+//        }
+
+        private List<AccMgtTransactionHistoryInfo> getInitItemList(String prefixList, int arrayResStr) {
             final String[] countryNames = mRecyclerView.getResources().getStringArray(arrayResStr);
-            ArrayList<StickyItemImpl> mItems = new ArrayList<>();
+            ArrayList<AccMgtTransactionHistoryInfo> mItems = new ArrayList<>();
             // Insert headers into list of items.
-            String lastHeader = lastItem != null ? lastItem.text.substring(0, 1) : "";
-            int sectionManagerType = StickyAdapter.LINEAR;
-            int headerCount = 0;
-            int lastItemPosition = lastItem != null ? lastItem.sectionFirstPosition() : 0;
-            int sectionFirstPosition = lastItemPosition;
             for (int i = 0; i < countryNames.length; i++) {
-                String header = countryNames[i].substring(0, 1);
-                if (!TextUtils.equals(lastHeader, header)) { // is need to create new group
-                    // Insert new header view and update section data.
-//                sectionManager = (sectionManager + 1) % 2;
-                    sectionFirstPosition = lastItemPosition + i + headerCount;
-                    lastHeader = header;
-                    headerCount += 1;
-                    mItems.add(getItem(ViewType.TYPE_HEADER, countryNames[i], sectionManagerType, sectionFirstPosition));
+                int size = new Random().nextInt(5);
+                long date = getDateTest();
+                for (int j = 0; j < 3; j++) {
+                    AccMgtTransactionHistoryInfo accMgtTransactionHistoryInfo = new AccMgtTransactionHistoryInfo();
+                    accMgtTransactionHistoryInfo.transactionDescriptionOne = prefixList + "-" + (i == 0 ? "End" + countryNames[i] + "--- " + j : countryNames[i] + "--- " + j);
+                    accMgtTransactionHistoryInfo.transactionDateTime = date;
+                    accMgtTransactionHistoryInfo.generateGroupDisplay();
+                    mItems.add(accMgtTransactionHistoryInfo);
                 }
-                mItems.add(getItem(ViewType.TYPE_CONTENT, countryNames[i], sectionManagerType, sectionFirstPosition));
             }
-            stickyItemWrapper.setHeaderCount(headerCount);
             return mItems;
         }
 
-        private StickyItemImpl getItem(int viewType, String text, int sectionManager, int sectionFirstPosition) {
-            StickyItemImpl item = new StickyItemImpl(viewType, sectionManager, sectionFirstPosition);
-            item.text = text;
-            return item;
+        private long getDateTest() {
+            dateTest--;
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_MONTH, dateTest);
+            return calendar.getTimeInMillis();
         }
     }
 }
