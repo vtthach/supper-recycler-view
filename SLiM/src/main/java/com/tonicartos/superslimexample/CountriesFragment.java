@@ -37,7 +37,7 @@ public class CountriesFragment extends Fragment {
 
     private boolean mAreMarginsFixed;
 
-    private Random mRng = new Random();
+    private static Random mRng = new Random();
 
     public boolean areHeadersOverlaid() {
         return (mHeaderDisplay & LayoutManager.LayoutParams.HEADER_OVERLAY) != 0;
@@ -205,8 +205,12 @@ public class CountriesFragment extends Fragment {
                 long date = getDateTest();
                 for (int j = 0; j < 3; j++) {
                     AccMgtTransactionHistoryInfo accMgtTransactionHistoryInfo = new AccMgtTransactionHistoryInfo();
+                    accMgtTransactionHistoryInfo.transactionType = i % 2 == 0 ? "Card Transaction" : "Payment";
                     accMgtTransactionHistoryInfo.transactionDescriptionOne = prefixList + "-" + (i == 0 ? "End" + countryNames[i] + "--- " + j : countryNames[i] + "--- " + j);
                     accMgtTransactionHistoryInfo.transactionDateTime = date;
+                    accMgtTransactionHistoryInfo.transactionAmountDebit = mRng.nextInt(99999);
+                    accMgtTransactionHistoryInfo.transactionAmountCredit = mRng.nextInt(99999);
+                    accMgtTransactionHistoryInfo.serviceFee = -4.50;
                     items.add(accMgtTransactionHistoryInfo);
                 }
             }

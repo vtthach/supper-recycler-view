@@ -1,0 +1,5 @@
+<resources>
+    <dimen name="account_transaction_header_padding_left_right">15dp</dimen>
+    <dimen name="account_transaction_header_height">33dp</dimen>
+    <dimen name="account_transaction_margin_right">40dp</dimen>
+</resources>

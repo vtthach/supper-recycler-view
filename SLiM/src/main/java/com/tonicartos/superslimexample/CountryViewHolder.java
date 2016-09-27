@@ -14,7 +14,7 @@ class CountryViewHolder extends RecyclerView.ViewHolder {
     CountryViewHolder(View view) {
         super(view);
 
-        mTextView = (TextView) view.findViewById(R.id.text);
+        mTextView = (TextView) view.findViewById(R.id.tvHeaderDate);
     }
 
     public void bindItem(String text) {

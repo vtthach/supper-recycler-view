@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="@dimen/account_transaction_margin_right"
+    android:orientation="vertical"
+    android:paddingBottom="7dp"
+    android:paddingTop="7dp">
+
+    <View
+        style="@style/AccountTransactionHistoryDivider"
+        android:layout_height="0.5dp"
+        android:layout_toRightOf="@+id/tvTransType" />
+
+    <TextView
+        android:id="@+id/tvTransType"
+        android:layout_marginTop="@dimen/account_transaction_header_padding_left_right"
+        style="@style/AccountTransactionHistoryTextColumn.Left.Content"
+        android:text="@string/account_transaction_history_transaction_type"
+        tools:text="Card Transaction" />
+
+    <TextView
+        android:id="@+id/tvTransAmount"
+        style="@style/AccountTransactionHistoryTextColumn.Content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/account_transaction_header_padding_left_right"
+        android:gravity="right|center_vertical"
+        tools:text="-R710.00" />
+
+    <TextView
+        android:id="@+id/tvTransDescription"
+        style="@style/AccountTransactionHistoryTextColumn.Content"
+        android:layout_marginTop="10dp"
+        android:layout_toLeftOf="@+id/tvTransAmount"
+        android:layout_toRightOf="@+id/tvTransType"
+        tools:text="PNP WOODMEAD HYPERM 484162*7617" />
+
+    <TextView
+        android:id="@+id/labelTransFees"
+        style="@style/AccountTransactionHistoryTextColumn.Content"
+        android:layout_alignLeft="@+id/tvTransDescription"
+        android:layout_below="@+id/tvTransDescription"
+        android:text="@string/account_transaction_history_fees"/>
+
+    <TextView
+        android:id="@+id/tvTransFees"
+        style="@style/AccountTransactionHistoryTextColumn.Content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@id/labelTransFees"
+        android:textColor="@color/account_transaction_history_amount_red"
+        android:gravity="right|center_vertical"
+        tools:text="-R710.00" />
+</android.support.percent.PercentRelativeLayout>

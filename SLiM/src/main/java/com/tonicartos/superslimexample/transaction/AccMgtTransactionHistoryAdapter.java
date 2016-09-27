@@ -13,8 +13,10 @@ import com.tonicartos.superslimexample.recycler.LoadMoreAdapter;
 
 import java.util.List;
 
-public class AccMgtTransactionHistoryAdapter extends LoadMoreAdapter<AccMgtTransactionHistoryInfo> {
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
+public class AccMgtTransactionHistoryAdapter extends LoadMoreAdapter<AccMgtTransactionHistoryInfo> {
 
     public AccMgtTransactionHistoryAdapter(RecyclerView recyclerView, Context context, int headerMode, List<AccMgtTransactionHistoryInfo> itemList) {
         super(recyclerView, context, headerMode, itemList);
@@ -23,19 +25,19 @@ public class AccMgtTransactionHistoryAdapter extends LoadMoreAdapter<AccMgtTrans
     @Override
     public GenericViewHolder onCreateFooterHolder(ViewGroup parent) {
         return new LoadingViewHolder(LayoutInflater.from(context)
-                .inflate(R.layout.loading_view, parent, false));
+                .inflate(R.layout.account_transaction_history_loading_view, parent, false));
     }
 
     @Override
     public GenericViewHolder onCreateContentHolder(ViewGroup parent) {
         return new ItemViewHolder(LayoutInflater.from(context)
-                .inflate(R.layout.text_line_item, parent, false));
+                .inflate(R.layout.account_transaction_history_view_item_content, parent, false));
     }
 
     @Override
     public GenericViewHolder onCreateStickyHeaderHolder(ViewGroup parent) {
         return new StickyHeaderViewHolder(LayoutInflater.from(context)
-                .inflate(R.layout.header_item, parent, false));
+                .inflate(R.layout.account_transaction_history_view_item_sticky_header, parent, false));
     }
 
     static class StickyHeaderViewHolder extends GenericViewHolder {
@@ -44,7 +46,7 @@ public class AccMgtTransactionHistoryAdapter extends LoadMoreAdapter<AccMgtTrans
 
         public StickyHeaderViewHolder(View itemView) {
             super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.text);
+            textView = (TextView) itemView.findViewById(R.id.tvHeaderDate);
         }
 
         @Override
@@ -55,17 +57,45 @@ public class AccMgtTransactionHistoryAdapter extends LoadMoreAdapter<AccMgtTrans
     }
 
     static class ItemViewHolder extends GenericViewHolder {
-        TextView textView;
+        @Bind(R.id.tvTransType)
+        TextView tvTransType;
+        @Bind(R.id.tvTransAmount)
+        TextView tvTransAmount;
+        @Bind(R.id.tvTransDescription)
+        TextView tvTransDescription;
+        @Bind(R.id.tvTransFees)
+        TextView tvTransFees;
+
+        Context context;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.text);
+            ButterKnife.bind(this, itemView);
+            context = itemView.getContext();
         }
 
         @Override
         public void bindItem(int position, Object item) {
-            AccMgtTransactionHistoryInfo accMgtTransactionHistoryInfo = (AccMgtTransactionHistoryInfo) item;
-            textView.setText(accMgtTransactionHistoryInfo.transactionDescriptionOne);
+            AccMgtTransactionHistoryInfo info = (AccMgtTransactionHistoryInfo) item;
+            tvTransDescription.setText(info.transactionDescriptionOne);
+            tvTransType.setText(info.transactionType);
+            double amount = info.transactionAmountDebit - info.transactionAmountCredit;
+            tvTransAmount.setText(getAmountFormat(amount));
+            tvTransFees.setText(getAmountFormat(info.serviceFee));
+            updateColorAmount(amount > 0
+                            ? R.color.account_transaction_history_amount_green
+                            : R.color.account_transaction_history_amount_red
+                    , tvTransAmount);
+        }
+
+        private void updateColorAmount(int colorResId, TextView tv) {
+            tv.setTextColor(context.getResources().getColor(colorResId));
+        }
+
+        private String getAmountFormat(double amount) {
+            // TODO vtt format money here
+            String sig = amount > 0 ? "" : "-";
+            return sig + "R" + amount;
         }
     }
 

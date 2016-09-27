@@ -1,14 +1,42 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="@string/account_transaction_history_heading"
+        android:textAppearance="@style/AccountTransactionHistoryHeading" />
+
+    <include layout="@layout/account_transaction_history_top_panel" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/account_transaction_header_height"
+        android:layout_gravity="end"
+        android:layout_marginRight="@dimen/account_transaction_margin_right"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/AccountTransactionHistoryTextAvailableSpend"
+            android:text="@string/account_transaction_history_available_to_spend" />
+
+        <TextView
+            style="@style/AccountTransactionHistoryTextAvailableSpend"
+            android:text="R29 500.70" />
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
-        style="@style/scrollbar_shape_style"
+        style="@style/AccountTransactionHistoryScrollBar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:scrollbars="vertical" />
-</RelativeLayout>
+</LinearLayout>
 
 

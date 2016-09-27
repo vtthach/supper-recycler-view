@@ -1,0 +1,8 @@
+<resources>
+    <string name="account_transaction_history_heading">For more information, tap on a transaction</string>
+    <string name="account_transaction_history_transaction_type">Transaction type</string>
+    <string name="account_transaction_history_description">Description</string>
+    <string name="account_transaction_history_amount">Amount</string>
+    <string name="account_transaction_history_available_to_spend">Available to spend</string>
+    <string name="account_transaction_history_fees">FEES</string>
+</resources>

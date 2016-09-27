@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="@dimen/account_transaction_margin_right"
+    android:background="#028482"
+    android:orientation="vertical">
+
+    <!--TODO update color Teal #028482-->
+    <TextView
+        android:id="@+id/tvLeft"
+        style="@style/AccountTransactionHistoryTextColumn.Left"
+        android:text="@string/account_transaction_history_transaction_type" />
+
+    <TextView
+        android:id="@+id/tvRight"
+        style="@style/AccountTransactionHistoryTextColumn"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:gravity="right|center_vertical"
+        android:text="@string/account_transaction_history_amount" />
+
+    <TextView
+        android:id="@+id/tvCenter"
+        style="@style/AccountTransactionHistoryTextColumn"
+        android:layout_toLeftOf="@+id/tvRight"
+        android:layout_toRightOf="@+id/tvLeft"
+        android:text="@string/account_transaction_history_description" />
+</android.support.percent.PercentRelativeLayout>

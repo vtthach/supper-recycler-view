@@ -1,0 +1,71 @@
+<resources>\
+    <!--Text appearance-->
+    <style name="AccountTransactionHistoryHeading">
+        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="AccountTransactionHistoryTextContent">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="AccountTransactionHistoryTextContent.White">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AccountTransactionHistoryTextContent.Italic">
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <!--View style-->
+    <style name="AccountTransactionHistoryScrollBar">
+        <item name="android:scrollbarAlwaysDrawVerticalTrack">true</item>
+        <item name="android:scrollbarStyle">outsideOverlay</item>
+        <item name="android:scrollbars">vertical</item>
+        <item name="android:fadeScrollbars">false</item>
+        <item name="android:scrollbarThumbVertical">@drawable/scrollbar_vertical_thumb</item>
+        <item name="android:scrollbarTrackVertical">@android:color/transparent</item>
+        <item name="android:scrollbarSize">10dp</item>
+        <item name="android:scrollbarFadeDuration">2000</item>
+        <item name="android:scrollbarDefaultDelayBeforeFade">1000</item>
+    </style>
+
+    <style name="AccountTransactionHistoryTextColumn">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textAppearance">@style/AccountTransactionHistoryTextContent.White</item>
+        <item name="android:paddingLeft">@dimen/account_transaction_header_padding_left_right</item>
+        <item name="android:paddingRight">@dimen/account_transaction_header_padding_left_right
+        </item>
+        <item name="android:layout_height">@dimen/account_transaction_header_height</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="AccountTransactionHistoryTextColumn.Content">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textAppearance">@style/AccountTransactionHistoryTextContent</item>
+    </style>
+
+    <style name="AccountTransactionHistoryTextColumn.Left">
+        <item name="layout_widthPercent">30%</item>
+    </style>
+
+    <style name="AccountTransactionHistoryTextColumn.Left.Content">
+        <item name="android:textAppearance">@style/AccountTransactionHistoryTextContent</item>
+    </style>
+
+    <style name="AccountTransactionHistoryTextAvailableSpend" parent="AccountTransactionHistoryTextColumn">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">right|center_vertical</item>
+        <item name="android:textAppearance">@style/AccountTransactionHistoryTextContent.Italic
+        </item>
+    </style>
+
+    <style name="AccountTransactionHistoryDivider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@android:color/darker_gray</item>
+    </style>
+</resources>

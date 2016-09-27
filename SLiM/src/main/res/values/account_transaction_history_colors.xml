@@ -1,0 +1,5 @@
+<resources>
+    <!--TODO update color here with style guild line-->
+    <color name="account_transaction_history_amount_red">#fd0025</color>
+    <color name="account_transaction_history_amount_green">#70de54</color>
+</resources>
