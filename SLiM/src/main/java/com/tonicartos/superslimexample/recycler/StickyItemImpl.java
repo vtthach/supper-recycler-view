@@ -1,14 +1,20 @@
 package com.tonicartos.superslimexample.recycler;
 
-public abstract class StickyItemImpl implements StickyItem {
-    private int sectionManagerType;
+import com.tonicartos.superslim.LinearSLM;
+
+public abstract class StickyItemImpl<T, V> implements StickyItem {
+    private int sectionManagerType = LinearSLM.ID; // Default layout type -> use GridSLM.ID if want sticky item grid
     private int sectionFirstPosition;
     private int type;
+    protected T groupId;
+    protected V groupDisplay;
 
-    public StickyItemImpl(int type, int sectionManagerType, int sectionFirstPosition) {
-        this.type = type;
-        this.sectionManagerType = sectionManagerType;
-        this.sectionFirstPosition = sectionFirstPosition;
+    public T getGroupId() {
+        return groupId;
+    }
+
+    public V getGroupDisplay() {
+        return groupDisplay;
     }
 
     @Override
@@ -18,7 +24,7 @@ public abstract class StickyItemImpl implements StickyItem {
 
     @Override
     public boolean isStickyHeader() {
-        return type == ViewType.TYPE_STICKY_HEADER;
+        return type == BaseRecyclerViewAdapter.ViewType.TYPE_STICKY_HEADER;
     }
 
     @Override
@@ -31,11 +37,10 @@ public abstract class StickyItemImpl implements StickyItem {
         return sectionFirstPosition;
     }
 
-    public abstract long getGroupId();
-
-    public void updateGroupInfo(int viewType, int sectionManagerType, int sectionFirstPosition){
+    public void updateGroupInfo(int viewType, int sectionFirstPosition, T groupId, V groupDisplay) {
         this.type = viewType;
-        this.sectionManagerType = sectionManagerType;
         this.sectionFirstPosition = sectionFirstPosition;
+        this.groupId = groupId;
+        this.groupDisplay = groupDisplay;
     }
 }

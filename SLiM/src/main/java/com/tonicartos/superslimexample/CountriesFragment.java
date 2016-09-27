@@ -7,11 +7,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.tonicartos.superslim.LayoutManager;
-import com.tonicartos.superslimexample.recycler.StickyItemsWrapper;
-import com.tonicartos.superslimexample.recycler.TransactionHistoryAdapter;
+import com.tonicartos.superslimexample.recycler.StickyUtils;
+import com.tonicartos.superslimexample.recycler.LoadMoreAdapter;
+import com.tonicartos.superslimexample.recycler.StickyItemGenerator;
+import com.tonicartos.superslimexample.transaction.AccMgtTransactionHistoryAdapter;
 import com.tonicartos.superslimexample.transaction.AccMgtTransactionHistoryInfo;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class CountriesFragment extends Fragment {
 
     private ViewHolder mViews;
 
-    private TransactionHistoryAdapter mAdapter;
+    private AccMgtTransactionHistoryAdapter mAdapter;
 
     private int mHeaderDisplay;
 
@@ -38,14 +39,12 @@ public class CountriesFragment extends Fragment {
 
     private Random mRng = new Random();
 
-    private Toast mToast = null;
-
     public boolean areHeadersOverlaid() {
         return (mHeaderDisplay & LayoutManager.LayoutParams.HEADER_OVERLAY) != 0;
     }
 
     public boolean areHeadersSticky() {
-        return (mHeaderDisplay & LayoutManager.LayoutParams.HEADER_STICKY) != 0;
+        return (mHeaderDisplay & LayoutManager.LayoutParams.HEADER_STICKY) != 0; // NOSONAR will be replace in next version of SLiM library
     }
 
     public boolean areMarginsFixed() {
@@ -58,14 +57,14 @@ public class CountriesFragment extends Fragment {
 
     public void setHeaderMode(int mode) {
         mHeaderDisplay = mode | (mHeaderDisplay & LayoutManager.LayoutParams.HEADER_OVERLAY) | (
-                mHeaderDisplay & LayoutManager.LayoutParams.HEADER_STICKY);
+                mHeaderDisplay & LayoutManager.LayoutParams.HEADER_STICKY);// NOSONAR will be replace in next version of SLiM library
         mAdapter.setHeaderDisplay(mHeaderDisplay);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        return inflater.inflate(R.layout.account_transaction_history_fragment, container, false);
     }
 
     @Override
@@ -81,12 +80,12 @@ public class CountriesFragment extends Fragment {
                             getResources().getBoolean(R.bool.default_margins_fixed));
         } else {
             mHeaderDisplay = LayoutManager.LayoutParams.HEADER_INLINE
-                    | LayoutManager.LayoutParams.HEADER_STICKY;
+                    | LayoutManager.LayoutParams.HEADER_STICKY; // NOSONAR will be replace in next version of SLiM library
             mAreMarginsFixed = getResources().getBoolean(R.bool.default_margins_fixed);
         }
         mViews = new ViewHolder(view);
         mViews.initViews(new LayoutManager(getActivity()));
-        mAdapter = new TransactionHistoryAdapter(mViews.mRecyclerView, getActivity(), mHeaderDisplay, mViews.initItemList());
+        mAdapter = new AccMgtTransactionHistoryAdapter(mViews.mRecyclerView, getActivity(), mHeaderDisplay, mViews.initItemList());
         mAdapter.setMarginsFixed(mAreMarginsFixed);
         mAdapter.setHeaderDisplay(mHeaderDisplay);
         mViews.setAdapter(mAdapter);
@@ -101,15 +100,6 @@ public class CountriesFragment extends Fragment {
 
     public void scrollToRandomPosition() {
         int position = mRng.nextInt(mAdapter.getItemCount());
-        String s = "Scroll to position " + position
-                + (mAdapter.isItemStickyHeader(position) ? ", header " : ", item ")
-                + mAdapter.itemToString(position) + ".";
-        if (mToast != null) {
-            mToast.setText(s);
-        } else {
-            mToast = Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT);
-        }
-        mToast.show();
         mViews.scrollToPosition(position);
     }
 
@@ -122,8 +112,8 @@ public class CountriesFragment extends Fragment {
 
     public void setHeadersSticky(boolean areHeadersSticky) {
         mHeaderDisplay = areHeadersSticky ? mHeaderDisplay
-                | LayoutManager.LayoutParams.HEADER_STICKY
-                : mHeaderDisplay & ~LayoutManager.LayoutParams.HEADER_STICKY;
+                | LayoutManager.LayoutParams.HEADER_STICKY // NOSONAR will be replace in next version of SLiM library
+                : mHeaderDisplay & ~LayoutManager.LayoutParams.HEADER_STICKY; // NOSONAR will be replace in next version of SLiM library
         mAdapter.setHeaderDisplay(mHeaderDisplay);
     }
 
@@ -134,30 +124,32 @@ public class CountriesFragment extends Fragment {
 
     public void smoothScrollToRandomPosition() {
         int position = mRng.nextInt(mAdapter.getItemCount());
-        String s = "Smooth scroll to position " + position
-                + (mAdapter.isItemStickyHeader(position) ? ", header " : ", item ")
-                + mAdapter.itemToString(position) + ".";
-        if (mToast != null) {
-            mToast.setText(s);
-        } else {
-            mToast = Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT);
-        }
-        mToast.show();
         mViews.smoothScrollToPosition(position);
     }
 
-    private static class ViewHolder implements TransactionHistoryAdapter.OnLoadMoreListener {
-
+    private static class ViewHolder implements LoadMoreAdapter.OnLoadMoreListener {
+        public final StickyItemGenerator<AccMgtTransactionHistoryInfo, Long, String> stickyItemGenerator;
         private final RecyclerView mRecyclerView;
         private int loadMore = 0;
-        private TransactionHistoryAdapter adapter;
-
-        public StickyItemsWrapper stickyItemWrapper;
+        private LoadMoreAdapter adapter;
         private int dateTest;
 
         public ViewHolder(View view) {
-            mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-            stickyItemWrapper = new StickyItemsWrapper();
+            mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+            stickyItemGenerator = new StickyItemGenerator<AccMgtTransactionHistoryInfo, Long, String>(AccMgtTransactionHistoryInfo.class) {
+
+                @Override
+                public int compare(AccMgtTransactionHistoryInfo o1, AccMgtTransactionHistoryInfo o2) {
+                    return o2.getGroupId() != null
+                            ? o2.getGroupId().compareTo(o1.getGroupId())
+                            : o1.getGroupId() == null ? 0 : -1;
+                }
+
+                @Override
+                public String getGroupDisplay(Long groupId) {
+                    return StickyUtils.getFormatDateLong(groupId);
+                }
+            };
         }
 
         public void initViews(LayoutManager lm) {
@@ -168,7 +160,7 @@ public class CountriesFragment extends Fragment {
             mRecyclerView.scrollToPosition(position);
         }
 
-        public void setAdapter(TransactionHistoryAdapter adapter) {
+        public void setAdapter(LoadMoreAdapter adapter) {
             this.adapter = adapter;
             mRecyclerView.setAdapter(adapter);
             adapter.setOnLoadMoreListener(this);
@@ -185,7 +177,7 @@ public class CountriesFragment extends Fragment {
                 public void run() {
                     Log.i("vtt", "Start get data OnLoadMore:" + loadMore);
                     adapter.setLoaded();
-                    stickyItemWrapper.processAddToListData(getInitItemList(loadMore + "_", R.array.country_names_2));
+                    stickyItemGenerator.processAddToListData(getInitItemList(loadMore + "_", R.array.country_names_2));
                     adapter.notifyDataSetChanged();
                 }
             }, 4000);
@@ -202,48 +194,23 @@ public class CountriesFragment extends Fragment {
         }
 
         public List<AccMgtTransactionHistoryInfo> initItemList() {
-            return stickyItemWrapper.processAddToListData(getInitItemList(0 + "_", R.array.country_names));
+            return stickyItemGenerator.processAddToListData(getInitItemList(0 + "_", R.array.country_names));
         }
-
-//        private List<AccMgtTransactionHistoryInfo> getInitItemList(StickyItemImpl lastItem, int arrayResStr, int size) {
-//            final String[] countryNames = mRecyclerView.getResources().getStringArray(arrayResStr);
-//            ArrayList<StickyItemImpl> itemList = new ArrayList<>();
-//            // Insert headers into list of items.
-//            String lastHeader = lastItem != null ? lastItem.text.substring(0, 1) : "";
-//            int sectionManagerType = StickyHeaderAdapter.LINEAR;
-//            int headerCount = 0;
-//            int lastItemPosition = lastItem != null ? lastItem.sectionFirstPosition() : 0;
-//            int sectionFirstPosition = lastItemPosition;
-//            for (int i = 0; i < countryNames.length; i++) {
-//                String header = countryNames[i].substring(0, 1);
-//                if (!TextUtils.equals(lastHeader, header)) { // is need to create new group
-//                    // Insert new header view and update section data.
-////                sectionManager = (sectionManager + 1) % 2;
-//                    sectionFirstPosition = size + itemList.size();
-//                    lastHeader = header;
-//                    itemList.add(getItem(ViewType.TYPE_HEADER, countryNames[i], sectionManagerType, sectionFirstPosition));
-//                }
-//                itemList.add(getItem(ViewType.TYPE_CONTENT, countryNames[i], sectionManagerType, sectionFirstPosition));
-//            }
-//            return itemList;
-//        }
 
         private List<AccMgtTransactionHistoryInfo> getInitItemList(String prefixList, int arrayResStr) {
             final String[] countryNames = mRecyclerView.getResources().getStringArray(arrayResStr);
-            ArrayList<AccMgtTransactionHistoryInfo> mItems = new ArrayList<>();
+            ArrayList<AccMgtTransactionHistoryInfo> items = new ArrayList<>();
             // Insert headers into list of items.
             for (int i = 0; i < countryNames.length; i++) {
-                int size = new Random().nextInt(5);
                 long date = getDateTest();
                 for (int j = 0; j < 3; j++) {
                     AccMgtTransactionHistoryInfo accMgtTransactionHistoryInfo = new AccMgtTransactionHistoryInfo();
                     accMgtTransactionHistoryInfo.transactionDescriptionOne = prefixList + "-" + (i == 0 ? "End" + countryNames[i] + "--- " + j : countryNames[i] + "--- " + j);
                     accMgtTransactionHistoryInfo.transactionDateTime = date;
-                    accMgtTransactionHistoryInfo.generateGroupDisplay();
-                    mItems.add(accMgtTransactionHistoryInfo);
+                    items.add(accMgtTransactionHistoryInfo);
                 }
             }
-            return mItems;
+            return items;
         }
 
         private long getDateTest() {

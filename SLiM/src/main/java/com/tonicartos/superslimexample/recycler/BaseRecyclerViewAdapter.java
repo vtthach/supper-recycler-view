@@ -10,16 +10,14 @@ import java.util.List;
 
 public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<BaseRecyclerViewAdapter.GenericViewHolder> {
 
-    protected static final String TAG = "BaseRecyclerViewAdapter";
-
     /**
      * Layout inflater from captureShopperCardView.
      */
-    protected LayoutInflater mInflater;
+    protected LayoutInflater inflater;
     /**
      * The captureShopperCardView which will show list item.
      */
-    protected Context mContext;
+    protected Context context;
     /**
      * Data of items.
      */
@@ -29,7 +27,7 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
     /**
      * set is show footer.
      */
-    private boolean mIsShowFooter = false;
+    private boolean isShowFooter = false;
 
     /**
      * Create list adapter.
@@ -39,9 +37,9 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
      */
     public BaseRecyclerViewAdapter(Context context, List<T> items) {
         // Cache the LayoutInflate to avoid asking for a new one each time.
-        mInflater = LayoutInflater.from(context);
-        mContext = context;
-        itemList = items;
+        this.inflater = LayoutInflater.from(context);
+        this.itemList = items;
+        this.context = context;
     }
 
     /**
@@ -135,7 +133,7 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
      * @return
      */
     protected boolean isPositionHeader(int position) {
-        return (isHasHeader() && position == 0);
+        return isHasHeader() && position == 0;
     }
 
     /**
@@ -236,7 +234,7 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
      *
      * @return
      */
-    protected boolean isHasHeader() {
+    protected boolean isHasHeader(){
         return false;
     }
 
@@ -250,7 +248,7 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
     }
 
     public boolean isShowFooter() {
-        return mIsShowFooter;
+        return isShowFooter;
     }
 
     /**
@@ -259,10 +257,10 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
      * @param isShow
      */
     public void setShowFooter(boolean isShow) {
-        if (isShow == mIsShowFooter) {
+        if (isShow == isShowFooter) {
             return;
         }
-        mIsShowFooter = isShow;
+        isShowFooter = isShow;
         if (isShow) {
             notifyItemInserted(getItemCount());
         } else {
@@ -276,5 +274,15 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter<Ba
         }
 
         public abstract void bindItem(int position, Object item);
+    }
+
+    public static final class ViewType {
+        public static final int TYPE_STICKY_HEADER = 0x00;
+        public static final int TYPE_HEADER = 0x01;
+        public static final int TYPE_CONTENT = 0x02;
+        public static final int TYPE_FOOTER = 0x03;
+
+        private ViewType() {
+        }
     }
 }

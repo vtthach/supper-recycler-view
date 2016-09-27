@@ -2,7 +2,6 @@ package com.tonicartos.superslimexample.recycler;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -23,9 +22,7 @@ public abstract class StickyHeaderAdapter<T extends StickyItem> extends BaseRecy
         mHeaderDisplay = headerMode;
     }
 
-    public boolean isItemStickyHeader(int position) {
-        return getItem(position).isStickyHeader();
-    }
+    public abstract BaseRecyclerViewAdapter.GenericViewHolder onCreateStickyHeaderHolder(ViewGroup parent);
 
     @Override
     public BaseRecyclerViewAdapter.GenericViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -36,24 +33,17 @@ public abstract class StickyHeaderAdapter<T extends StickyItem> extends BaseRecy
         }
     }
 
-    public abstract BaseRecyclerViewAdapter.GenericViewHolder onCreateStickyHeaderHolder(ViewGroup parent);
-
     @Override
     public void onBindViewHolder(BaseRecyclerViewAdapter.GenericViewHolder holder, int position) {
         // When wanna support HEADER_TYPE vs STICKY_HEADER_TYPE ->> Update here
-        final T item = (position == itemList.size() ? null : itemList.get(position));
+        final T item = position >= itemList.size() ? null : itemList.get(position);
         holder.bindItem(position, item);
-        if (item == null) {
-            Log.i("vtt", "item null:" + position);
-            Log.i("vtt", "List size when null:" + itemList.size());
-        }
         updateLayoutParam(holder, item);
     }
 
     private void updateLayoutParam(BaseRecyclerViewAdapter.GenericViewHolder holder, StickyItem item) {
         final View itemView = holder.itemView;
         final GridSLM.LayoutParams lp = GridSLM.LayoutParams.from(itemView.getLayoutParams());
-        // Overrides xml attrs, could use different layouts too.
         if (item == null) {
             // Layout for footer
             lp.setSlm(LinearSLM.ID);
@@ -69,8 +59,8 @@ public abstract class StickyHeaderAdapter<T extends StickyItem> extends BaseRecy
                 lp.headerEndMarginIsAuto = !mMarginsFixed;
                 lp.headerStartMarginIsAuto = !mMarginsFixed;
             }
-            lp.setSlm(item.sectionManagerType());
-            lp.setColumnWidth(mContext.getResources().getDimensionPixelSize(R.dimen.grid_column_width));
+            lp.setSlm(item.sectionManagerType());// Sticky header for group of grid views
+            lp.setColumnWidth(context.getResources().getDimensionPixelSize(R.dimen.grid_column_width)); // Sticky header for group of grid views
             lp.setFirstPosition(item.sectionFirstPosition()); // Importance
         }
         itemView.setLayoutParams(lp);
@@ -106,5 +96,10 @@ public abstract class StickyHeaderAdapter<T extends StickyItem> extends BaseRecy
     @Override
     public GenericViewHolder onCreateHeaderHolder(ViewGroup parent) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected boolean isHasHeader() {
+        return false;
     }
 }
