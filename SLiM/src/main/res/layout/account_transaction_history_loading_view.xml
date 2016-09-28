@@ -8,5 +8,6 @@
         style="@style/Widget.AppCompat.ProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:indeterminateTint="@color/account_transaction_progress_color"
         android:layout_gravity="center" />
 </FrameLayout>

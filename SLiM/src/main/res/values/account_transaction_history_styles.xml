@@ -35,15 +35,15 @@
     <style name="AccountTransactionHistoryTextColumn">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textAppearance">@style/AccountTransactionHistoryTextContent.White</item>
-        <item name="android:paddingLeft">@dimen/account_transaction_header_padding_left_right</item>
-        <item name="android:paddingRight">@dimen/account_transaction_header_padding_left_right
-        </item>
+        <item name="android:paddingLeft">@dimen/account_transaction_padding_left_right</item>
+        <item name="android:paddingRight">@dimen/account_transaction_padding_left_right</item>
         <item name="android:layout_height">@dimen/account_transaction_header_height</item>
         <item name="android:gravity">center_vertical</item>
     </style>
 
     <style name="AccountTransactionHistoryTextColumn.Content">
         <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:textAppearance">@style/AccountTransactionHistoryTextContent</item>
     </style>
 
@@ -66,6 +66,6 @@
     <style name="AccountTransactionHistoryDivider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
-        <item name="android:background">@android:color/darker_gray</item>
+        <item name="android:background">@color/account_transaction_history_amount_divider_sticky_header</item>
     </style>
 </resources>

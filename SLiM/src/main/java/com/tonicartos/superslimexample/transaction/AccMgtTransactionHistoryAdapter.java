@@ -24,20 +24,21 @@ public class AccMgtTransactionHistoryAdapter extends LoadMoreAdapter<AccMgtTrans
 
     @Override
     public GenericViewHolder onCreateFooterHolder(ViewGroup parent) {
-        return new LoadingViewHolder(LayoutInflater.from(context)
-                .inflate(R.layout.account_transaction_history_loading_view, parent, false));
+        return new LoadingViewHolder(inflateView(parent, R.layout.account_transaction_history_loading_view));
     }
 
     @Override
     public GenericViewHolder onCreateContentHolder(ViewGroup parent) {
-        return new ItemViewHolder(LayoutInflater.from(context)
-                .inflate(R.layout.account_transaction_history_view_item_content, parent, false));
+        return new ItemViewHolder(inflateView(parent, R.layout.account_transaction_history_view_item_content));
     }
 
     @Override
     public GenericViewHolder onCreateStickyHeaderHolder(ViewGroup parent) {
-        return new StickyHeaderViewHolder(LayoutInflater.from(context)
-                .inflate(R.layout.account_transaction_history_view_item_sticky_header, parent, false));
+        return new StickyHeaderViewHolder(inflateView(parent, R.layout.account_transaction_history_view_item_sticky_header));
+    }
+
+    private View inflateView(ViewGroup parent, int layoutId) {
+        return LayoutInflater.from(context).inflate(layoutId, parent, false);
     }
 
     static class StickyHeaderViewHolder extends GenericViewHolder {
@@ -95,7 +96,7 @@ public class AccMgtTransactionHistoryAdapter extends LoadMoreAdapter<AccMgtTrans
         private String getAmountFormat(double amount) {
             // TODO vtt format money here
             String sig = amount > 0 ? "" : "-";
-            return sig + "R" + amount;
+            return sig + "R" + Math.abs(amount);
         }
     }
 

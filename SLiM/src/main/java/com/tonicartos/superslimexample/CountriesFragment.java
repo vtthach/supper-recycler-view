@@ -9,11 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tonicartos.superslim.LayoutManager;
-import com.tonicartos.superslimexample.recycler.StickyUtils;
 import com.tonicartos.superslimexample.recycler.LoadMoreAdapter;
-import com.tonicartos.superslimexample.recycler.StickyItemGenerator;
 import com.tonicartos.superslimexample.transaction.AccMgtTransactionHistoryAdapter;
 import com.tonicartos.superslimexample.transaction.AccMgtTransactionHistoryInfo;
+import com.tonicartos.superslimexample.transaction.TransactionHistoryItemGenerator;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -128,7 +127,7 @@ public class CountriesFragment extends Fragment {
     }
 
     private static class ViewHolder implements LoadMoreAdapter.OnLoadMoreListener {
-        public final StickyItemGenerator<AccMgtTransactionHistoryInfo, Long, String> stickyItemGenerator;
+        public final TransactionHistoryItemGenerator stickyItemGenerator;
         private final RecyclerView mRecyclerView;
         private int loadMore = 0;
         private LoadMoreAdapter adapter;
@@ -136,20 +135,7 @@ public class CountriesFragment extends Fragment {
 
         public ViewHolder(View view) {
             mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-            stickyItemGenerator = new StickyItemGenerator<AccMgtTransactionHistoryInfo, Long, String>(AccMgtTransactionHistoryInfo.class) {
-
-                @Override
-                public int compare(AccMgtTransactionHistoryInfo o1, AccMgtTransactionHistoryInfo o2) {
-                    return o2.getGroupId() != null
-                            ? o2.getGroupId().compareTo(o1.getGroupId())
-                            : o1.getGroupId() == null ? 0 : -1;
-                }
-
-                @Override
-                public String getGroupDisplay(Long groupId) {
-                    return StickyUtils.getFormatDateLong(groupId);
-                }
-            };
+            stickyItemGenerator = new TransactionHistoryItemGenerator(AccMgtTransactionHistoryInfo.class);
         }
 
         public void initViews(LayoutManager lm) {
@@ -203,7 +189,7 @@ public class CountriesFragment extends Fragment {
             // Insert headers into list of items.
             for (int i = 0; i < countryNames.length; i++) {
                 long date = getDateTest();
-                for (int j = 0; j < 3; j++) {
+                for (int j = 0; j < 15; j++) {
                     AccMgtTransactionHistoryInfo accMgtTransactionHistoryInfo = new AccMgtTransactionHistoryInfo();
                     accMgtTransactionHistoryInfo.transactionType = i % 2 == 0 ? "Card Transaction" : "Payment";
                     accMgtTransactionHistoryInfo.transactionDescriptionOne = prefixList + "-" + (i == 0 ? "End" + countryNames[i] + "--- " + j : countryNames[i] + "--- " + j);

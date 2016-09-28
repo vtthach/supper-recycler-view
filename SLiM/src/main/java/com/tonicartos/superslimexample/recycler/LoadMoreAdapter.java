@@ -31,7 +31,8 @@ public abstract class LoadMoreAdapter<T extends StickyItemImpl> extends StickyHe
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (preConditionToLoadMore(linearLayoutManager.getItemCount(), linearLayoutManager.findLastVisibleItemPosition())
+                if (preConditionToLoadMore(linearLayoutManager.getItemCount()
+                        , linearLayoutManager.findLastVisibleItemPosition())
                         && isListenerAccept()) {
                     isLoading = true;
                     setShowFooter(true);
