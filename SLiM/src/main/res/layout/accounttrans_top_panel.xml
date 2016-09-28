@@ -9,12 +9,12 @@
     <!--TODO update color Teal #028482-->
     <TextView
         android:id="@+id/tvLeft"
-        style="@style/AccountTransactionHistoryTextColumn.Left"
+        style="@style/AccountTransTextColumn.Left"
         android:text="@string/account_transaction_history_transaction_type" />
 
     <TextView
         android:id="@+id/tvRight"
-        style="@style/AccountTransactionHistoryTextColumn"
+        style="@style/AccountTransTextColumn"
         android:layout_width="wrap_content"
         android:layout_alignParentRight="true"
         android:gravity="right|center_vertical"
@@ -22,7 +22,7 @@
 
     <TextView
         android:id="@+id/tvCenter"
-        style="@style/AccountTransactionHistoryTextColumn"
+        style="@style/AccountTransTextColumn"
         android:layout_toLeftOf="@+id/tvRight"
         android:layout_toRightOf="@+id/tvLeft"
         android:text="@string/account_transaction_history_description" />

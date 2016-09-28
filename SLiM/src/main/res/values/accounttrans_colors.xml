@@ -1,0 +1,10 @@
+<resources>
+    <!--TODO update color here with style guild line-->
+    <color name="account_trans_amount_red">#fd0025</color>
+    <color name="account_trans_amount_green">#70de54</color>
+    <color name="account_trans_amount_divider_content">#4faaaaaa</color>
+    <color name="account_trans_amount_divider_sticky_header">#FFADADAD</color>
+    <color name="account_trans_sticky_header_background">#F7F7F7</color>
+    <color name="account_trans_fragment_background">#FFFDFDFE</color>
+    <color name="account_trans_progress_color">#FEF</color>
+</resources>

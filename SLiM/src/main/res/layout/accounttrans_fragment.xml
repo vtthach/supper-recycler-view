@@ -2,7 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/account_transaction_history_fragment_background"
+    android:background="@color/account_trans_fragment_background"
     android:padding="20dp">
 
     <TextView
@@ -10,9 +10,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:text="@string/account_transaction_history_heading"
-        android:textAppearance="@style/AccountTransactionHistoryHeading" />
+        android:textAppearance="@style/AccountTransHeading" />
 
-    <include layout="@layout/account_transaction_history_top_panel" />
+    <include layout="@layout/accounttrans_top_panel" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -23,17 +23,17 @@
         android:orientation="horizontal">
 
         <TextView
-            style="@style/AccountTransactionHistoryTextAvailableSpend"
+            style="@style/AccountTransTextAvailableSpend"
             android:text="@string/account_transaction_history_available_to_spend" />
 
         <TextView
-            style="@style/AccountTransactionHistoryTextAvailableSpend"
+            style="@style/AccountTransTextAvailableSpend"
             android:text="R29 500.70" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
-        style="@style/AccountTransactionHistoryScrollBar"
+        style="@style/AccountTransScrollBar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"

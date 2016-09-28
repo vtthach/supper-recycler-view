@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/account_transaction_sticky_header_height"
     android:layout_marginRight="@dimen/account_transaction_margin_right"
-    android:background="@color/account_transaction_history_sticky_header_background"
+    android:background="@color/account_trans_sticky_header_background"
     app:slm_headerDisplay="inline|sticky"
     app:slm_isHeader="true"
     app:slm_section_headerMarginStart="56dip">
 
     <View
-        style="@style/AccountTransactionHistoryDivider"
+        style="@style/AccountTransDivider"
         android:layout_gravity="top" />
 
     <TextView
@@ -21,9 +21,9 @@
         android:layout_marginLeft="@dimen/account_transaction_padding_left_right"
         android:gravity="start|center_vertical"
         android:text="1 March 2016"
-        android:textAppearance="@style/AccountTransactionHistoryTextContent" />
+        android:textAppearance="@style/AccountTransTextContent" />
 
     <View
-        style="@style/AccountTransactionHistoryDivider"
+        style="@style/AccountTransDivider"
         android:layout_gravity="bottom" />
 </FrameLayout>

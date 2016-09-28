@@ -9,21 +9,21 @@
     android:paddingTop="@dimen/account_transaction_padding_top_bottom_item_content">
 
     <View
-        style="@style/AccountTransactionHistoryDivider"
+        style="@style/AccountTransDivider"
         android:layout_toRightOf="@+id/tvTransType"
-        android:background="@color/account_transaction_history_amount_divider_content" />
+        android:background="@color/account_trans_amount_divider_content" />
 
     <TextView
         android:id="@+id/tvTransType"
         android:layout_height="wrap_content"
-        style="@style/AccountTransactionHistoryTextColumn.Left.Content"
+        style="@style/AccountTransTextColumn.Left.Content"
         android:layout_marginTop="@dimen/account_transaction_padding_left_right"
         android:text="@string/account_transaction_history_transaction_type"
         tools:text="Card Transaction" />
 
     <TextView
         android:id="@+id/tvTransAmount"
-        style="@style/AccountTransactionHistoryTextColumn.Content"
+        style="@style/AccountTransTextColumn.Content"
         android:layout_width="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginTop="@dimen/account_transaction_padding_left_right"
@@ -32,7 +32,7 @@
 
     <TextView
         android:id="@+id/tvTransDescription"
-        style="@style/AccountTransactionHistoryTextColumn.Content"
+        style="@style/AccountTransTextColumn.Content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/account_transaction_padding_left_right"
         android:layout_toLeftOf="@+id/tvTransAmount"
@@ -42,18 +42,18 @@
     <TextView
         android:id="@+id/labelTransFees"
         android:layout_marginTop="5dp"
-        style="@style/AccountTransactionHistoryTextColumn.Content"
+        style="@style/AccountTransTextColumn.Content"
         android:layout_alignLeft="@+id/tvTransDescription"
         android:layout_below="@+id/tvTransDescription"
         android:text="@string/account_transaction_history_fees" />
 
     <TextView
         android:id="@+id/tvTransFees"
-        style="@style/AccountTransactionHistoryTextColumn.Content"
+        style="@style/AccountTransTextColumn.Content"
         android:layout_width="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@id/labelTransFees"
         android:gravity="right|center_vertical"
-        android:textColor="@color/account_transaction_history_amount_red"
+        android:textColor="@color/account_trans_amount_red"
         tools:text="-R710.00" />
 </android.support.percent.PercentRelativeLayout>

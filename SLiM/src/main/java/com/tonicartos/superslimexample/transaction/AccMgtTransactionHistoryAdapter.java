@@ -24,17 +24,17 @@ public class AccMgtTransactionHistoryAdapter extends LoadMoreAdapter<AccMgtTrans
 
     @Override
     public GenericViewHolder onCreateFooterHolder(ViewGroup parent) {
-        return new LoadingViewHolder(inflateView(parent, R.layout.account_transaction_history_loading_view));
+        return new LoadingViewHolder(inflateView(parent, R.layout.accounttrans_loading_view));
     }
 
     @Override
     public GenericViewHolder onCreateContentHolder(ViewGroup parent) {
-        return new ItemViewHolder(inflateView(parent, R.layout.account_transaction_history_view_item_content));
+        return new ItemViewHolder(inflateView(parent, R.layout.accounttrans_view_item_content));
     }
 
     @Override
     public GenericViewHolder onCreateStickyHeaderHolder(ViewGroup parent) {
-        return new StickyHeaderViewHolder(inflateView(parent, R.layout.account_transaction_history_view_item_sticky_header));
+        return new StickyHeaderViewHolder(inflateView(parent, R.layout.accounttrans_view_item_sticky_header));
     }
 
     private View inflateView(ViewGroup parent, int layoutId) {
@@ -84,8 +84,8 @@ public class AccMgtTransactionHistoryAdapter extends LoadMoreAdapter<AccMgtTrans
             tvTransAmount.setText(getAmountFormat(amount));
             tvTransFees.setText(getAmountFormat(info.serviceFee));
             updateColorAmount(amount > 0
-                            ? R.color.account_transaction_history_amount_green
-                            : R.color.account_transaction_history_amount_red
+                            ? R.color.account_trans_amount_green
+                            : R.color.account_trans_amount_red
                     , tvTransAmount);
         }
 
